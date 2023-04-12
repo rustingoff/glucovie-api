@@ -26,7 +26,42 @@ func InitAuthController(engine *gin.Engine, service services.UserServiceImpl) {
 }
 
 func (c *authController) Login(ctx *gin.Context) {
+	var err error
+	// var t map[string]string
+	var user models.UserCredentials
+	if err = ctx.BindJSON(&user); err != nil {
+		ctx.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{
+			"error": err.Error(),
+		})
+		return
+	}
 
+	// if govalidator.IsEmail(user.Email) {
+	// 	t, err = controller.authService.UserSignIn(user)
+	// 	if err != nil {
+	// 		if err.Error() == "invalid credentials" {
+	// 			c.AbortWithStatusJSON(http.StatusInternalServerError, response_api.BuildApiResponseOne(response_api.PasswordIsWrong, nil))
+	// 			return
+	// 		}
+	// 		c.AbortWithStatusJSON(http.StatusInternalServerError, response_api.BuildApiResponseOne(response_api.BackendSideErrorMessage, nil))
+	// 		return
+	// 	}
+	// } else {
+	// 	t, err = controller.authService.UserSignInPhone(user)
+	// 	if err != nil {
+	// 		if err.Error() == "Invalid credentials" {
+	// 			c.AbortWithStatusJSON(http.StatusInternalServerError, response_api.BuildApiResponseOne(response_api.PasswordIsWrong, nil))
+	// 			return
+	// 		}
+	// 		c.AbortWithStatusJSON(http.StatusInternalServerError, response_api.BuildApiResponseOne(response_api.BackendSideErrorMessage, nil))
+	// 		return
+	// 	}
+	// }
+
+	// infoMessage := fmt.Sprintf("Successfully login with email - %s ", user.Email)
+	// logger.ZapLogger.Info(infoMessage, logger.SystemInfoLogData("SignIn")...)
+	// apiResponse := response_api.BuildApiResponseOne("Successfully login", t)
+	// c.JSON(http.StatusOK, apiResponse)
 }
 
 func (c *authController) Register(ctx *gin.Context) {

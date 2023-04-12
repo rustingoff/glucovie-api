@@ -19,14 +19,6 @@ const (
 var signInKey = dotenv.GetEnvironmentVariable("TOKEN_SECRET_KEY")
 var refreshSignKey = dotenv.GetEnvironmentVariable("REFRESH_TOKEN_KEY")
 
-type SimpleTokenClaims struct {
-	jwt.StandardClaims
-	Username    string `json:"username"`
-	AccountType string `json:"account_type"`
-	Confirmed   string `json:"confirmed"`
-	Photo       string `json:"photo"`
-}
-
 type AuthTokenDetails struct {
 	AccessToken  string
 	RefreshToken string
@@ -94,5 +86,4 @@ func GenerateHashPassword(password string) string {
 	}
 
 	return string(hashedPasswordBytes)
-
 }

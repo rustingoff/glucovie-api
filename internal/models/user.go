@@ -19,3 +19,8 @@ func (u *User) Validate() error {
 	}
 	return nil
 }
+
+type UserCredentials struct {
+	Email    string `json:"email,omitempty"`
+	Password string `json:"password,omitempty"`
+}
