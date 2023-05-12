@@ -34,6 +34,7 @@ func (r *userRepository) Register(ctx context.Context, u *models.User) error {
 
 	if err != nil {
 		logger.Log.Error("failed to register user", zap.Error(err))
+		return err
 	}
 
 	return nil
