@@ -104,5 +104,6 @@ func (c *authController) GetUser(ctx *gin.Context) {
 
 	ctx.JSON(http.StatusOK, user)
 }
+
 func (c *authController) DeleteUser(ctx *gin.Context) {}
 func (c *authController) UpdateUser(ctx *gin.Context) {}

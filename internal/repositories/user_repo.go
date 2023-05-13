@@ -2,6 +2,7 @@ package repositories
 
 import (
 	"context"
+	"errors"
 	"glucovie/internal/constants"
 	"glucovie/internal/models"
 	"glucovie/pkg/logger"
@@ -17,6 +18,7 @@ type UserRepositoryImpl interface {
 	GetUser(ctx context.Context, userID string) (*models.User, error)
 	DeleteUser(ctx context.Context, userID string) error
 	UpdateUser(ctx context.Context, userID string, u map[string]interface{}) error
+	GetUserByEmail(ctx context.Context, email string) (*models.User, error)
 }
 
 type userRepository struct {
@@ -87,4 +89,18 @@ func (r *userRepository) UpdateUser(ctx context.Context, userID string, u map[st
 	}
 
 	return nil
+}
+
+func (r *userRepository) GetUserByEmail(ctx context.Context, email string) (*models.User, error) {
+	var user = &models.User{}
+	err := r.db.
+		Collection(constants.UserCollection).
+		FindOne(ctx, bson.M{"email": email}).
+		Decode(&user)
+
+	if err != nil && !errors.Is(err, mongo.ErrNoDocuments) {
+		return &models.User{}, err
+	}
+
+	return user, nil
 }

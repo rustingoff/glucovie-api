@@ -26,3 +26,11 @@ type UserCredentials struct {
 	Email    string `json:"email,omitempty"`
 	Password string `json:"password,omitempty"`
 }
+
+func (u UserCredentials) GetMail() string {
+	return u.Email
+}
+
+func (u UserCredentials) GetPassword() string {
+	return u.Password
+}
