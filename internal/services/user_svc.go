@@ -56,6 +56,15 @@ func (s *userService) Register(u *models.User) error {
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*5)
 	defer cancel()
 
+	user, err := s.repo.GetUserByEmail(ctx, u.Email)
+	if err != nil {
+		return err
+	}
+
+	if user.Email != "" {
+		return apperrors.ErrUserAlreadyExists
+	}
+
 	hashPassword := jwtoken.GenerateHashPassword(u.Password)
 	u.Password = hashPassword
 
@@ -77,5 +86,4 @@ func (s *userService) DeleteUser(userID string) error {
 // TODO: implement
 func (s *userService) UpdateUser(userID string, u *models.User) error {
 	panic("TODO: implement")
-
 }
