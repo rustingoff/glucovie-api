@@ -24,6 +24,10 @@ func main() {
 	userService := services.NewUserService(userRepository)
 	controllers.InitAuthController(router, userService)
 
+	glucoseRepository := repositories.NewGlucoseRepository(database)
+	glucoseService := services.NewGlucoseService(glucoseRepository)
+	controllers.InitGlucoseController(router, glucoseService)
+
 	srv := glucovieapi.NewHTTPServer(":8000", router)
 	srv.Start()
 }

@@ -1,3 +1,6 @@
 package constants
 
-const UserCollection = "users"
+const (
+	UserCollection    = "users"
+	GlucoseCollection = "glucose_level"
+)
