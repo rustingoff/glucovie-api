@@ -38,20 +38,20 @@ func (r *eventRepository) SaveEvent(ctx context.Context, model *models.EventMode
 }
 
 func (r *eventRepository) GetEvents(ctx context.Context, userID string) ([]*models.EventResponse, error) {
-	var response = []*models.EventResponse{}
+	var response []*models.EventResponse
 
 	cursor, err := r.db.
 		Collection(constants.EventCollection).
-		Find(ctx, bson.M{"user_id": userID})
+		Find(ctx, bson.M{"userid": userID})
 
 	if err != nil {
 		logger.Log.Error("failed to find events", zap.Error(err))
-		return response, err
+		return []*models.EventResponse{}, err
 	}
 
 	if err := cursor.All(ctx, &response); err != nil {
 		logger.Log.Error("failed to decode events", zap.Error(err))
-		return response, err
+		return []*models.EventResponse{}, err
 	}
 
 	return response, nil

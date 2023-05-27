@@ -20,6 +20,7 @@ func InitEventController(engine *gin.Engine, service services.EventServiceImpl) 
 	router := engine.Group("/event").Use(middleware.AuthMiddleware)
 	{
 		router.POST("/save", ac.saveEvent)
+		router.GET("/get", ac.getEvents)
 	}
 }
 
@@ -50,7 +51,7 @@ func (c *eventController) saveEvent(ctx *gin.Context) {
 	})
 }
 
-func (c *eventController) GetEvents(ctx *gin.Context) {
+func (c *eventController) getEvents(ctx *gin.Context) {
 	resp, err := c.service.GetEvents(ctx.GetString("user_id"))
 	if err != nil {
 		ctx.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{
