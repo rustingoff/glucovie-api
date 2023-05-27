@@ -40,7 +40,17 @@ func (s glucoseService) GetWeekGlucoseLevel() ([]*models.GlucoseResponse, error)
 	if err != nil {
 		return response, nil
 	}
-	fmt.Println(len(resp))
+
+	if len(resp) < 7 {
+		for i := len(resp); i < 7; i++ {
+			resp = append(resp, &models.GlucoseLevel{
+				Type:  "1",
+				Level: "0",
+				Date:  resp[0].Date.AddDate(0, 0, -i),
+			})
+		}
+	}
+
 	for k, v := range resp {
 		response[len(resp)-1-k] = &models.GlucoseResponse{
 			Level: v.Level,
