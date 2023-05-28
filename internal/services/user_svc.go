@@ -15,6 +15,8 @@ type UserServiceImpl interface {
 	GetUser(userID string) (*models.User, error)
 	DeleteUser(userID string) error
 	UpdateUser(userID string, u *models.User) error
+	SaveUserSettings(model models.SettingModel, userID string) error
+	GetSettingsByUserId(userID string) (*models.SettingModel, error)
 }
 
 type userService struct {
@@ -86,4 +88,12 @@ func (s *userService) DeleteUser(userID string) error {
 // TODO: implement
 func (s *userService) UpdateUser(userID string, u *models.User) error {
 	panic("TODO: implement")
+}
+
+func (s *userService) SaveUserSettings(model models.SettingModel, userID string) error {
+	return s.repo.SaveUserSettings(context.Background(), model, userID)
+
+}
+func (s *userService) GetSettingsByUserId(userID string) (*models.SettingModel, error) {
+	return s.repo.GetSettingsByUserId(context.Background(), userID)
 }

@@ -7,6 +7,7 @@ import (
 	"glucovie/pkg/logger"
 
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.uber.org/zap"
 )
@@ -14,6 +15,7 @@ import (
 type EventRepositoryImpl interface {
 	SaveEvent(ctx context.Context, u *models.EventModel) error
 	GetEvents(ctx context.Context, userID string) ([]*models.EventResponse, error)
+	DeleteEvent(ctx context.Context, id string) error
 }
 
 type eventRepository struct {
@@ -55,4 +57,20 @@ func (r *eventRepository) GetEvents(ctx context.Context, userID string) ([]*mode
 	}
 
 	return response, nil
+}
+
+func (r *eventRepository) DeleteEvent(ctx context.Context, id string) error {
+	objID, err := primitive.ObjectIDFromHex(id)
+	if err != nil {
+		logger.Log.Error("failed to convert id from hex", zap.Error(err))
+		return err
+	}
+
+	_, err = r.db.Collection(constants.EventCollection).DeleteOne(ctx, bson.M{"_id": objID})
+	if err != nil {
+		logger.Log.Error("failed to delete event", zap.Error(err))
+		return err
+	}
+
+	return nil
 }

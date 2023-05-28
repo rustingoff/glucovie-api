@@ -5,6 +5,7 @@ import (
 	"glucovie/internal/constants"
 	"glucovie/internal/models"
 	"glucovie/pkg/logger"
+	"time"
 
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -14,7 +15,7 @@ import (
 
 type GlucoseRepositoryImpl interface {
 	SaveGlucoseLevel(ctx context.Context, u *models.GlucoseLevel) error
-	GetWeekGlucoseLevel(ctx context.Context) ([]*models.GlucoseLevel, error)
+	GetWeekGlucoseLevel(ctx context.Context, userID string) ([]*models.GlucoseLevel, error)
 }
 
 type glucoseRepository struct {
@@ -38,18 +39,21 @@ func (r *glucoseRepository) SaveGlucoseLevel(ctx context.Context, model *models.
 	return nil
 }
 
-func (r *glucoseRepository) GetWeekGlucoseLevel(ctx context.Context) ([]*models.GlucoseLevel, error) {
+func (r *glucoseRepository) GetWeekGlucoseLevel(ctx context.Context, userID string) ([]*models.GlucoseLevel, error) {
 	var response = make([]*models.GlucoseLevel, 7)
 
 	opts := &options.FindOptions{
-		Sort:  bson.M{"date": -1},
-		Skip:  &[]int64{0}[0],
-		Limit: &[]int64{7}[0],
+		Sort: bson.M{"date": -1},
+		// Skip:  &[]int64{0}[0],
+		// Limit: &[]int64{7}[0],
 	}
 
 	cursor, err := r.db.
 		Collection(constants.GlucoseCollection).
-		Find(ctx, bson.M{}, opts)
+		Find(ctx, bson.M{
+			"userid": userID,
+			"date":   bson.M{"$gte": time.Now().Add(-(time.Hour * 24 * 7)), "$lte": time.Now()},
+		}, opts)
 
 	if err != nil {
 		logger.Log.Error("failed to find glucose level", zap.Error(err))

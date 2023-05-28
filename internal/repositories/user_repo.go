@@ -19,6 +19,8 @@ type UserRepositoryImpl interface {
 	DeleteUser(ctx context.Context, userID string) error
 	UpdateUser(ctx context.Context, userID string, u map[string]interface{}) error
 	GetUserByEmail(ctx context.Context, email string) (*models.User, error)
+	SaveUserSettings(ctx context.Context, model models.SettingModel, userID string) error
+	GetSettingsByUserId(ctx context.Context, userID string) (*models.SettingModel, error)
 }
 
 type userRepository struct {
@@ -103,4 +105,31 @@ func (r *userRepository) GetUserByEmail(ctx context.Context, email string) (*mod
 	}
 
 	return user, nil
+}
+
+func (r *userRepository) SaveUserSettings(ctx context.Context, model models.SettingModel, userID string) error {
+	objID, _ := primitive.ObjectIDFromHex(userID)
+
+	_, err := r.db.Collection(constants.UserCollection).UpdateOne(ctx, bson.M{"_id": objID}, bson.M{"$set": model})
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (r *userRepository) GetSettingsByUserId(ctx context.Context, userID string) (*models.SettingModel, error) {
+	objID, _ := primitive.ObjectIDFromHex(userID)
+
+	var settings = &models.SettingModel{}
+	err := r.db.
+		Collection(constants.UserCollection).
+		FindOne(ctx, bson.M{"_id": objID}).
+		Decode(&settings)
+
+	if err != nil && !errors.Is(err, mongo.ErrNoDocuments) {
+		return &models.SettingModel{}, err
+	}
+
+	return settings, nil
 }

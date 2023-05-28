@@ -1,12 +1,14 @@
 package main
 
 import (
+	"fmt"
 	glucovieapi "glucovie"
 	"glucovie/internal/controllers"
 	"glucovie/internal/repositories"
 	"glucovie/internal/services"
 	"glucovie/pkg/mongodb"
 	"net/http"
+	"time"
 
 	"github.com/gin-gonic/gin"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -19,6 +21,8 @@ func main() {
 	router.GET("/ping", func(ctx *gin.Context) {
 		ctx.JSON(http.StatusOK, "pong")
 	})
+
+	fmt.Println(int(time.Now().Add(-(time.Hour * 24)).Weekday()))
 
 	userRepository := repositories.NewUserRepository(database)
 	userService := services.NewUserService(userRepository)

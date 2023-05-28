@@ -7,12 +7,14 @@ import (
 )
 
 type User struct {
-	ID       primitive.ObjectID `json:"id,omitempty" bson:"_id,omitempty"`
-	Email    string             `json:"email,omitempty" bson:"email,omitempty" binding:"email,required"`
-	Phone    string             `json:"phone,omitempty" bson:"phone,omitempty" binding:"required"`
-	Password string             `json:"password,omitempty" bson:"password,omitempty" binding:"required"`
-	Gender   string             `json:"gender,omitempty" bson:"gender,omitempty"`
-	Age      uint8              `json:"age,omitempty" bson:"age,omitempty"`
+	ID      primitive.ObjectID `json:"id,omitempty" bson:"_id,omitempty"`
+	Email   string             `json:"email,omitempty" bson:"email,omitempty" binding:"email,required"`
+	DocMail string             `json:"doc_email,omitempty" bson:"doc_email,omitempty"`
+
+	Phone    string `json:"phone,omitempty" bson:"phone,omitempty" binding:"required"`
+	Password string `json:"password,omitempty" bson:"password,omitempty" binding:"required"`
+	Gender   string `json:"gender,omitempty" bson:"gender,omitempty"`
+	Age      uint8  `json:"age,omitempty" bson:"age,omitempty"`
 }
 
 func (u *User) Validate() error {

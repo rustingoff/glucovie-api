@@ -2,7 +2,6 @@ package services
 
 import (
 	"context"
-	"fmt"
 	"glucovie/internal/models"
 	"glucovie/internal/repositories"
 	"time"
@@ -10,7 +9,7 @@ import (
 
 type GlucoseServiceImpl interface {
 	SaveGlucoseLevel(model *models.GlucoseLevel) error
-	GetWeekGlucoseLevel() ([]*models.GlucoseResponse, error)
+	GetWeekGlucoseLevel(userID string) ([]models.GlucoseResponse, error)
 }
 
 type glucoseService struct {
@@ -30,34 +29,51 @@ func (s glucoseService) SaveGlucoseLevel(model *models.GlucoseLevel) error {
 	return s.repo.SaveGlucoseLevel(ctx, model)
 }
 
-func (s glucoseService) GetWeekGlucoseLevel() ([]*models.GlucoseResponse, error) {
+func (s glucoseService) GetWeekGlucoseLevel(userID string) ([]models.GlucoseResponse, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*5)
 	defer cancel()
 
-	var response = make([]*models.GlucoseResponse, 7)
-
-	resp, err := s.repo.GetWeekGlucoseLevel(ctx)
+	resp, err := s.repo.GetWeekGlucoseLevel(ctx, userID)
 	if err != nil {
-		return response, nil
+		return []models.GlucoseResponse{}, nil
 	}
 
-	if len(resp) < 7 {
-		for i := len(resp); i < 7; i++ {
-			resp = append(resp, &models.GlucoseLevel{
-				Type:  "1",
-				Level: "0",
-				Date:  resp[0].Date.AddDate(0, 0, -i),
-			})
-		}
-	}
+	var response = make([]*models.GlucoseResponse, len(resp))
+
+	var val = make(map[int32]models.GlucoseResponse)
+	var count = make(map[int32]uint)
 
 	for k, v := range resp {
-		response[len(resp)-1-k] = &models.GlucoseResponse{
+		response[k] = &models.GlucoseResponse{
 			Level: v.Level,
 			Type:  v.Type,
-			Day:   fmt.Sprint(int(v.Date.Weekday())),
+			Day:   int32(v.Date.Weekday()),
 		}
+		val[int32(v.Date.Weekday())] = models.GlucoseResponse{
+			Level: val[int32(v.Date.Weekday())].Level + v.Level,
+			Type:  v.Type,
+			Day:   int32(v.Date.Weekday()),
+		}
+
+		count[response[k].Day]++
 	}
 
-	return response, nil
+	var r = make([]models.GlucoseResponse, 7)
+	for k, v := range val {
+		v.Level = v.Level / float32(count[v.Day])
+		r[k] = v
+	}
+
+	for k, v := range r {
+		if v == (models.GlucoseResponse{}) {
+			r[k] = models.GlucoseResponse{
+				Type:  "1",
+				Level: 0,
+				Day:   int32(k),
+			}
+		}
+
+	}
+
+	return r, nil
 }

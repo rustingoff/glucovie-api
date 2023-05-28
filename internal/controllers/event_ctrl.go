@@ -21,6 +21,7 @@ func InitEventController(engine *gin.Engine, service services.EventServiceImpl) 
 	{
 		router.POST("/save", ac.saveEvent)
 		router.GET("/get", ac.getEvents)
+		router.DELETE("/:id", ac.deleteEvent)
 	}
 }
 
@@ -62,5 +63,19 @@ func (c *eventController) getEvents(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, gin.H{
 		"message": "Successfully get events",
 		"data":    resp,
+	})
+}
+
+func (c *eventController) deleteEvent(ctx *gin.Context) {
+	id := ctx.Param("id")
+	err := c.service.DeleteEvent(id)
+	if err != nil {
+		ctx.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{
+			"error": err.Error(),
+		})
+	}
+
+	ctx.JSON(http.StatusOK, gin.H{
+		"message": "Successfully deleted event",
 	})
 }

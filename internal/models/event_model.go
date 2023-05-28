@@ -1,5 +1,7 @@
 package models
 
+import "go.mongodb.org/mongo-driver/bson/primitive"
+
 type EventModel struct {
 	Title  string `json:"title"`
 	From   string `json:"from"`
@@ -8,7 +10,8 @@ type EventModel struct {
 }
 
 type EventResponse struct {
-	Title string `json:"title"`
-	From  string `json:"from"`
-	To    string `json:"to"`
+	Id    primitive.ObjectID `json:"id" bson:"_id"`
+	Title string             `json:"title"`
+	From  string             `json:"from"`
+	To    string             `json:"to"`
 }
