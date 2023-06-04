@@ -2,13 +2,46 @@ package services
 
 import (
 	"bytes"
+	"fmt"
+	"glucovie/internal/models"
 	smtpgomail "glucovie/pkg/smtp"
 	"html/template"
 
 	"gopkg.in/gomail.v2"
 )
 
-func SendEmail(to string) error {
+func SendEmail(to string, level []models.GlucoseResponse) error {
+	type week struct {
+		Luni     string
+		Marti    string
+		Miercuri string
+		Joi      string
+		Vineri   string
+		Sambata  string
+		Duminica string
+	}
+
+	var w = week{}
+
+	for _, v := range level {
+		switch v.Day {
+		case 0:
+			w.Luni = fmt.Sprint(v.Level)
+		case 1:
+			w.Marti = fmt.Sprint(v.Level)
+		case 2:
+			w.Miercuri = fmt.Sprint(v.Level)
+		case 3:
+			w.Joi = fmt.Sprint(v.Level)
+		case 4:
+			w.Vineri = fmt.Sprint(v.Level)
+		case 5:
+			w.Sambata = fmt.Sprint(v.Level)
+		case 6:
+			w.Duminica = fmt.Sprint(v.Level)
+		}
+	}
+
 	mailDialer := smtpgomail.NewEmailConnection()
 
 	m := gomail.NewMessage()
@@ -24,7 +57,7 @@ func SendEmail(to string) error {
 	}
 
 	buffer := new(bytes.Buffer)
-	if err = t.Execute(buffer, nil); err != nil {
+	if err = t.Execute(buffer, w); err != nil {
 		return err
 	}
 

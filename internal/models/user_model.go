@@ -11,10 +11,12 @@ type User struct {
 	Email   string             `json:"email,omitempty" bson:"email,omitempty" binding:"email,required"`
 	DocMail string             `json:"doc_email,omitempty" bson:"doc_email,omitempty"`
 
-	Phone    string `json:"phone,omitempty" bson:"phone,omitempty" binding:"required"`
-	Password string `json:"password,omitempty" bson:"password,omitempty" binding:"required"`
-	Gender   string `json:"gender,omitempty" bson:"gender,omitempty"`
-	Age      uint8  `json:"age,omitempty" bson:"age,omitempty"`
+	Phone             string `json:"phone,omitempty" bson:"phone,omitempty" binding:"required"`
+	Password          string `json:"password,omitempty" bson:"password,omitempty" binding:"required"`
+	Gender            string `json:"gender,omitempty" bson:"gender,omitempty"`
+	Age               uint8  `json:"age,omitempty" bson:"age,omitempty"`
+	Notification      bool   `json:"notification"`
+	EmailNotification bool   `json:"email_notification" bson:"email_notification"`
 }
 
 func (u *User) Validate() error {

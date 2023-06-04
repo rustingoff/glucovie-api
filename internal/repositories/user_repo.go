@@ -21,6 +21,7 @@ type UserRepositoryImpl interface {
 	GetUserByEmail(ctx context.Context, email string) (*models.User, error)
 	SaveUserSettings(ctx context.Context, model models.SettingModel, userID string) error
 	GetSettingsByUserId(ctx context.Context, userID string) (*models.SettingModel, error)
+	GetAllUsersIDs(ctx context.Context) ([]models.User, error)
 }
 
 type userRepository struct {
@@ -132,4 +133,18 @@ func (r *userRepository) GetSettingsByUserId(ctx context.Context, userID string)
 	}
 
 	return settings, nil
+}
+
+func (r *userRepository) GetAllUsersIDs(ctx context.Context) ([]models.User, error) {
+	var users []models.User
+	cursor, err := r.db.Collection(constants.UserCollection).Find(ctx, bson.M{})
+	if err != nil {
+		return nil, err
+	}
+
+	if err := cursor.All(ctx, &users); err != nil {
+		return nil, err
+	}
+
+	return users, nil
 }
