@@ -6,6 +6,7 @@ import (
 	"glucovie/internal/models"
 	smtpgomail "glucovie/pkg/smtp"
 	"html/template"
+	"time"
 
 	"gopkg.in/gomail.v2"
 )
@@ -19,9 +20,11 @@ func SendEmail(to string, level []models.GlucoseResponse) error {
 		Vineri   string
 		Sambata  string
 		Duminica string
+		Date     string
 	}
 
 	var w = week{}
+	w.Date = time.Now().Format("01.02.2006")
 
 	for _, v := range level {
 		switch v.Day {

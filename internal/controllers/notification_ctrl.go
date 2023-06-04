@@ -20,7 +20,7 @@ func InitNotificationController(engine *gin.Engine) {
 }
 
 func (c *notificationController) notifyUser(ctx *gin.Context) {
-
+	log.Printf("connected to socket\n")
 	upgrader := websocket.Upgrader{}
 	conn, err := upgrader.Upgrade(ctx.Writer, ctx.Request, nil)
 	if err != nil {
