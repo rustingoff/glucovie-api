@@ -37,6 +37,8 @@ func main() {
 	eventService := services.NewEventService(eventRepository)
 	controllers.InitEventController(router, eventService)
 
+	controllers.InitNotificationController(router)
+
 	go func() {
 		users, err := userRepository.GetAllUsersIDs(context.Background())
 		if err != nil {
