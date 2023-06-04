@@ -1,7 +1,9 @@
 package services
 
 import (
+	"bytes"
 	smtpgomail "glucovie/pkg/smtp"
+	"html/template"
 
 	"gopkg.in/gomail.v2"
 )
@@ -15,9 +17,22 @@ func SendEmail(to string) error {
 	m.SetHeader("To", to)
 	m.SetHeader("Subject", "GlucoVie Support")
 
-	m.SetBody("text/html", "Hello World")
+	tempPath := "./templates/email_template.html"
+	t, err := template.ParseFiles(tempPath)
+	if err != nil {
+		return err
+	}
 
-	err := mailDialer.DialAndSend(m)
+	buffer := new(bytes.Buffer)
+	if err = t.Execute(buffer, nil); err != nil {
+		return err
+	}
+
+	str := buffer.String()
+
+	m.SetBody("text/html", str)
+
+	err = mailDialer.DialAndSend(m)
 	if err != nil {
 		return err
 	}
