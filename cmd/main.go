@@ -2,13 +2,13 @@ package main
 
 import (
 	"context"
-	"fmt"
 	glucovieapi "glucovie"
 	"glucovie/internal/controllers"
 	"glucovie/internal/models"
 	"glucovie/internal/repositories"
 	"glucovie/internal/services"
 	"glucovie/pkg/mongodb"
+	"log"
 	"net/http"
 	"time"
 
@@ -57,7 +57,7 @@ func init() {
 }
 
 func runScheduler(users []models.User, svc services.GlucoseServiceImpl) {
-	fmt.Println("Cron Started !")
+	log.Printf("cron started...\n")
 	s := gocron.NewScheduler(time.UTC)
 	job, err := s.Every(1).Week().Do(func() {
 		for _, v := range users {
